@@ -3,10 +3,8 @@
 library(openxlsx)
 #Set up workspace
 setwd("C:/Users/hx055/Desktop/MResTerm 1/CASA0005 Geographic Information Systems and Science/Assesment/gis_assesment_Data")
------------------
 
 sheetnames <- getSheetNames("Total_economic-inactivity-by-gender-reason.xlsx")
---------
 
 #save each sheet in '.xlsx' as '.csv'
 for (i in (1:length(sheetnames))) {
@@ -55,12 +53,12 @@ colnames(finalfram) <- paste("year", colnames(finalfram), sep = "_")
 
 row.names(finalfram)<-deal[1:32,1]
 write.csv(finalfram, file = "All person_final.csv")
-
+#named the first column as area_code
 finalfram<-read.csv("All person_final.csv",header=F)
 finalfram[1,1]<-"area_code"
 write.table(finalfram,"All person_final.csv",row.names=FALSE,col.names=FALSE,sep=",")
 
-
+#do the same thing to another two datasets
 temp<-read.csv("Females.csv",header=F)
 
 deal<-temp[5:36,]
