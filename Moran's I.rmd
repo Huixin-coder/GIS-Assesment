@@ -1,0 +1,36 @@
+# GIS-Assesment
+
+#install.packages("ape")
+
+library(ape)
+
+#male<-read.csv(".csv")
+allpersonfinal<-read.csv("C:/Users/hx055/Desktop/MResTerm 1/CASA0005 Geographic Information Systems and Science/Assesment/gis_assesment_Data/All persons_final.csv")
+
+frmale_deal<-allpersonfinal[,2:17]
+frmale_deal <- frmale_deal[1:32,]
+
+frmale_dealed<-scale(frmale_deal, center = TRUE, scale = TRUE)
+arr<- matrix(1:32,16,2)
+arrframe<-data.frame(arr)
+
+library(spdep)
+
+space<-read.gal("all person_rate.gal",override.id=TRUE)
+space <- nb2mat(space)
+
+space<-space[2:33,2:33]
+for(i in 1:16)
+  arrframe[i,2]<-Moran.I(frmale_dealed[,i],space)$observed
+
+arrframe[1]<-c(2004:2019)
+
+plot(arrframe$X1,arrframe$X2,xlab="Year",ylab="Moran's I",xaxt="n",pch=16)
+
+axis(1,arrframe$X1)    
+
+lm.sol = lm(arrframe$X2~arrframe$X1,data=arrframe)
+
+summary(lm.sol)
+
+abline(lm.sol)
