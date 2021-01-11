@@ -4,7 +4,7 @@
 
 library(ape)
 
-#male<-read.csv(".csv")
+#allpersonfinal<-read.csv(".csv")
 allpersonfinal<-read.csv("C:/Users/hx055/Desktop/MResTerm 1/CASA0005 Geographic Information Systems and Science/Assesment/gis_assesment_Data/All persons_final.csv")
 
 frmale_deal<-allpersonfinal[,2:17]
