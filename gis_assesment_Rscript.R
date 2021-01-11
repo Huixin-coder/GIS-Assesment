@@ -1,0 +1,107 @@
+library(openxlsx)
+#Set up workspace
+setwd("C:/Users/hx055/Desktop/MResTerm 1/CASA0005 Geographic Information Systems and Science/Assesment/gis_assesment_Data")
+
+sheetnames <- getSheetNames("Total_economic-inactivity-by-gender-reason.xlsx")
+
+#save each sheet in '.xlsx' as '.csv'
+for (i in (1:length(sheetnames))) {
+  write.table(read.xlsx("C:/Users/hx055/Desktop/MResTerm 1/CASA0005 Geographic Information Systems and Science/Assesment/gis_assesment_Data/Total_economic-inactivity-by-gender-reason.xlsx",sheet=i),paste(sheetnames[i],'.csv',sep=""),row.names=F,sep="")
+}
+
+library(tidyverse)
+mycsv <- read_csv("Inactive Reasons and rates.csv")
+
+library(gcookbook)
+library(ggplot2)
+library(RColorBrewer)
+
+#use ggplot to draw line charts of different reasons and year
+ggplot(data=mycsv,aes(x=year,y=student_rate,group=1))+geom_line(size=1.3,color=4)+xlab("year")+geom_point(color=2)
+
+ggplot(data=mycsv,aes(x=year,y=`looking after family/home_rate`,group=1))+geom_line(size=1.3,color=4)+xlab("year")+geom_point(color=2)
+
+ggplot(data=mycsv,aes(x=year,y=`temporary sick_rate`,group=1))+geom_line(size=1.3,color=4)+xlab("year")+geom_point(color=2)
+
+ggplot(data=mycsv,aes(x=year,y=`long-term sick_rate`,group=1))+geom_line(size=1.3,color=4)+xlab("year")+geom_point(color=2)
+
+ggplot(data=mycsv,aes(x=year,y=`discouraged_rate`,group=1))+geom_line(size=1.3,color=4)+xlab("year")+geom_point(color=2)
+
+ggplot(data=mycsv,aes(x=year,y=`who do not want a job_rate`,group=1))+geom_line(size=1.3,color=4)+xlab("year")+geom_point(color=2)
+
+#do data processing and data cleaning (preparation before using into QGIS)
+library(tidyverse)
+mycsv2 <- read_csv("All persons.csv")
+
+#the first row of the data is not a column name, use header=F
+temp<-read.csv("All persons.csv",header=F)
+#slice the file and take out the required rows
+deal<-temp[5:36,]
+#built a matrix to store the required data (the economic inactivity rate in each year)
+#the size of the matrix is 32*16 (the data of City of London is partly missing, could not do further analysis with it, so it is deleted from here
+final<-matrix(1:512,32,16)
+#Convert the matrix above to a data frame
+finalfram<-data.frame(final)
+#assign each year's data to each row
+for(i in 1:16)
+  finalfram[i]<-deal[1+4*i]
+finalfram<-as.data.frame(lapply(finalfram,as.numeric))
+#specify the name of the column
+names(finalfram)<-c(2004:2019)
+colnames(finalfram) <- paste("year", colnames(finalfram), sep = "_")
+
+row.names(finalfram)<-deal[1:32,1]
+write.csv(finalfram, file = "All person_final.csv")
+#named the first column as area_cod
+finalfram<-read.csv("All person_final.csv",header=F)
+finalfram[1,1]<-"area_code"
+write.table(finalfram,"All person_final.csv",row.names=FALSE,col.names=FALSE,sep=",")
+
+#do the same thing to another two datasets
+temp<-read.csv("Females.csv",header=F)
+
+deal<-temp[5:36,]
+
+final<-matrix(1:512,32,16)
+
+finalfram<-data.frame(final)
+
+for(i in 1:16)
+  finalfram[i]<-deal[1+4*i]
+finalfram<-as.data.frame(lapply(finalfram,as.numeric))
+
+names(finalfram)<-c(2004:2019)
+colnames(finalfram) <- paste("year", colnames(finalfram), sep = "_")
+
+row.names(finalfram)<-deal[1:32,1]
+
+write.csv(finalfram, file = "Females_final.csv")
+
+finalfram<-read.csv("Females_final.csv",header=F)
+finalfram[1,1]<-"area_code"
+write.table(finalfram,"Females_final.csv",row.names=FALSE,col.names=FALSE,sep=",")
+
+
+temp<-read.csv("Males.csv",header=F)
+
+deal<-temp[5:36,]
+
+final<-matrix(1:512,32,16)
+
+finalfram<-data.frame(final)
+
+for(i in 1:16)
+  finalfram[i]<-deal[1+4*i]
+finalfram<-as.data.frame(lapply(finalfram,as.numeric))
+
+names(finalfram)<-c(2004:2019)
+colnames(finalfram) <- paste("year", colnames(finalfram), sep = "_")
+
+row.names(finalfram)<-deal[1:32,1]
+
+write.csv(finalfram, file = "Males_final.csv")
+
+finalfram<-read.csv("Males_final.csv",header=F)
+finalfram[1,1]<-"area_code"
+write.table(finalfram,"Males_final.csv",row.names=FALSE,col.names=FALSE,sep=",")
+
